@@ -1,18 +1,21 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import StyledTextInput from './StyledTextInput';
 import StyledButton from './StyledButton';
 import postcodeValidator from '../../utils/postcodeValidator';
 import fetchData from '../../utils/fetchData';
-import { crimeDataTypes } from '../../utils/types/crimeDataTypes';
 import { locationDetailsTypes } from '../../utils/types/locationTypes';
 import crimeLinkConstructor from '../../utils/crimeLinkConstructor';
 import { errorMessages } from '../../utils/error';
 
-function Form () {
-    const [data, setData] = useState<crimeDataTypes[] | []>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+import { Data } from '../../utils/context/DataContext';
+import { Loading } from '../../utils/context/LoadingContext';
+import { Error } from '../../utils/context/ErrorContext';
 
+function Form () {
+
+    const { data, setData } = useContext(Data);
+    const { setLoading } = useContext(Loading);
+    const { setError } = useContext(Error);
 
     const [postCode, setPostCode] = useState<string>("");
 
@@ -25,11 +28,9 @@ function Form () {
         }
     }, [win]);
 
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPostCode(e.target.value);
     };
-
 
     const handleSubmit = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -43,7 +44,6 @@ function Form () {
                         latitude: locationData.data.latitude,
                         longitude: locationData.data.longitude,
                     };
-
                     win.setItem('postcode', postCode);
                     const crimeLink = crimeLinkConstructor(locationDetails);
                     const crimeData = await fetchData(crimeLink);
@@ -55,10 +55,14 @@ function Form () {
                 }
         } else {
             setError(errorMessages.INVALID_POSTCODE);
+            setLoading(false);
         }
     };
 
-    console.log('data: ', data, 'loading: ', loading, 'error: ', error);
+    console.log(data);
+
+    // TODO: When the button is clicked it should show the data view with
+    // an option to go to Map view (currently doesn't exist)
 
     return (
         <form>
