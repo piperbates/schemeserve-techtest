@@ -16,7 +16,15 @@ const GlobalStyle = createGlobalStyle`
     }
 
     h1 {
+        margin-top: 16px;
         margin-bottom: 28px;
+        font-size: 2em;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        font-weight: 500;
     }
 
     p {
